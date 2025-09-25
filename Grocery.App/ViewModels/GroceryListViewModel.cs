@@ -12,8 +12,9 @@ namespace Grocery.App.ViewModels
 {
     public partial class GroceryListViewModel : BaseViewModel
     {
-        public ObservableCollection<GroceryList> GroceryLists { get; set; }
-        private readonly IGroceryListService _groceryListService;
+		[ObservableProperty]
+		private ObservableCollection<GroceryList> groceryLists;
+		private readonly IGroceryListService _groceryListService;
 
 		public GroceryListViewModel(IGroceryListService groceryListService) 
         {
@@ -30,14 +31,10 @@ namespace Grocery.App.ViewModels
 
 			if (name is string listName && !string.IsNullOrWhiteSpace(listName))
             {
-				GroceryList newList = new GroceryList(_groceryListService.GetAll().Count, listName, DateOnly.Parse("2025-1-3"), "#003300", 1);
+				GroceryList newList = new GroceryList(_groceryListService.GetAll().Count+1, listName, DateOnly.FromDateTime(DateTime.Now), "#003300", 1);
 				_groceryListService.Add(newList);
 				GroceryLists.Add(newList);
 			}
-            foreach (var list in GroceryLists)
-            {
-                System.Diagnostics.Debug.WriteLine(list.Name);
-            }
 		}
 
 		[RelayCommand]
@@ -48,12 +45,19 @@ namespace Grocery.App.ViewModels
         }
 
 		public override void OnAppearing()
-        {
-            base.OnAppearing();
-            GroceryLists = new(_groceryListService.GetAll());
-        }
+		{
+			base.OnAppearing();
 
-        public override void OnDisappearing()
+			var latestLists = _groceryListService.GetAll();
+
+			GroceryLists.Clear();
+			foreach (var list in latestLists)
+			{
+				GroceryLists.Add(list);
+			}
+		}
+
+		public override void OnDisappearing()
         {
             base.OnDisappearing();
             GroceryLists.Clear();
