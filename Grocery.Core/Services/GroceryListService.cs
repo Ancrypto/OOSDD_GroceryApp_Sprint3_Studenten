@@ -17,7 +17,8 @@ namespace Grocery.Core.Services
         }
         public GroceryList Add(GroceryList item)
         {
-            throw new NotImplementedException();
+            _groceryRepository.Add(item);
+            return item;
         }
 
         public GroceryList? Delete(GroceryList item)
