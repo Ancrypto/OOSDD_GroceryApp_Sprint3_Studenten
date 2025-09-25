@@ -26,7 +26,7 @@ jobs:
         run: dotnet workload install maui
  
       - name: Herstel afhankelijkheden
-        run: dotnet restore
+        run: dotnet restore -r win-x64
  
       - name: Bouw de applicatie
         run: dotnet build --configuration Release --no-restore
