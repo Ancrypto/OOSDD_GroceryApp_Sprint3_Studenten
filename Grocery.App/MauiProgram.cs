@@ -44,7 +44,8 @@ namespace Grocery.App
             builder.Services.AddTransient<ProductView>().AddTransient<ProductViewModel>();
             builder.Services.AddTransient<ChangeColorView>().AddTransient<ChangeColorViewModel>();
             builder.Services.AddTransient<LoginView>().AddTransient<LoginViewModel>();
-            return builder.Build();
+			builder.UseMauiApp<App>().UseMauiCommunityToolkit();
+			return builder.Build();
         }
     }
 }
