@@ -19,7 +19,23 @@ namespace Grocery.App.ViewModels
         public ObservableCollection<GroceryListItem> MyGroceryListItems { get; set; } = [];
         public ObservableCollection<Product> AvailableProducts { get; set; } = [];
 
-        [ObservableProperty]
+        private string _SearchProduct;
+        public string SearchProduct 
+        {
+            get => _SearchProduct;
+            set
+            {
+                _SearchProduct = "";
+                _SearchProduct = value;
+				FilterProducts();
+			}
+        }
+
+		public ObservableCollection<Product> FilteredProducts { get; set; } = [];
+
+
+
+		[ObservableProperty]
         GroceryList groceryList = new(0, "None", DateOnly.MinValue, "", 0);
         [ObservableProperty]
         string myMessage;
@@ -52,7 +68,26 @@ namespace Grocery.App.ViewModels
             Load(value.Id);
         }
 
-        [RelayCommand]
+        private void FilterProducts()
+        {
+			GetAvailableProducts();
+			FilteredProducts.Clear();
+            foreach(Product p in AvailableProducts)
+            {
+                if (p.Name.Contains(_SearchProduct, StringComparison.OrdinalIgnoreCase))
+                {
+                    FilteredProducts.Add(p);
+                }
+            }
+            AvailableProducts.Clear();
+            foreach(Product p in FilteredProducts)
+            {
+                AvailableProducts.Add(p);
+            }
+        }
+
+
+		[RelayCommand]
         public async Task ChangeColor()
         {
             Dictionary<string, object> paramater = new() { { nameof(GroceryList), GroceryList } };
